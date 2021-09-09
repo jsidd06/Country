@@ -7,11 +7,13 @@ function Details(props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [country, setCountry] = useState({});
+  const [countries, setCountries] = useState([]);
 
   useEffect(() => {
     axios
       .get("https://restcountries.eu/rest/v2/all")
       .then((res) => {
+        setCountries(res.data);
         setCountry(res.data.find((country) => country.name === countryName));
         if (!country) {
           setError("Country Not Available!s");
@@ -46,7 +48,7 @@ function Details(props) {
               <p>Area:- {country.area}</p>
               <p>
                 Currency:-
-                {country.currencies[0].name}{' '} ({country.currencies[0].symbol})
+                {country.currencies[0].name} ({country.currencies[0].symbol})
               </p>
               <p>
                 Language:-{" "}
@@ -54,10 +56,30 @@ function Details(props) {
               </p>
               <p>Region:- {country.region}</p>
               <p>Population:- {country.population}</p>
-              <p>
-                Border:- 
-                {country.borders.toString()}
-              </p>
+              <div className="row align-items-center">
+                Border:-
+                {country.borders.map((code) => {
+                  const country = countries.find(
+                    (country) => country.alpha3Code === code
+                  );
+
+                  return (
+                    <span
+                      style={{
+                        maxWidth: 100,
+                        textAlign: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <p>{code}</p>
+                      <img
+                        style={{ maxHeight: 50, maxWidth: 50 }}
+                        src={country.flag}
+                      />
+                    </span>
+                  );
+                })}
+              </div>
             </Col>
           </Row>
         </CardBody>
